@@ -1,12 +1,10 @@
-const form = document.querySelector("form");
 const fontSizeInput = document.getElementById("fontsize");
 const fontColorInput = document.getElementById("fontcolor");
+const saveBtn = document.querySelector('input[type="submit"]');
 
 // Set cookie
-function setCookie(name, value, days = 365) {
-  const date = new Date();
-  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+function setCookie(name, value) {
+  document.cookie = `${name}=${value};path=/`;
 }
 
 // Get cookie
@@ -15,35 +13,34 @@ function getCookie(name) {
 
   for (let cookie of cookies) {
     cookie = cookie.trim();
-    if (cookie.startsWith(name + "=")) {
+    if (cookie.indexOf(name + "=") === 0) {
       return cookie.substring(name.length + 1);
     }
   }
-
-  return null;
+  return "";
 }
 
-// Apply preferences
+// Apply saved preferences
 function applyPreferences() {
-  const savedSize = getCookie("fontsize");
-  const savedColor = getCookie("fontcolor");
+  const fontSize = getCookie("fontsize");
+  const fontColor = getCookie("fontcolor");
 
-  if (savedSize) {
-    document.documentElement.style.setProperty("--fontsize", savedSize);
-    fontSizeInput.value = parseInt(savedSize);
+  if (fontSize) {
+    document.documentElement.style.setProperty("--fontsize", fontSize);
+    fontSizeInput.value = parseInt(fontSize);
   }
 
-  if (savedColor) {
-    document.documentElement.style.setProperty("--fontcolor", savedColor);
-    fontColorInput.value = savedColor;
+  if (fontColor) {
+    document.documentElement.style.setProperty("--fontcolor", fontColor);
+    fontColorInput.value = fontColor;
   }
 }
 
 // Save preferences
-form.addEventListener("submit", function (e) {
+saveBtn.addEventListener("click", function (e) {
   e.preventDefault();
 
-  const size = `${fontSizeInput.value}px`;
+  const size = fontSizeInput.value + "px";
   const color = fontColorInput.value;
 
   setCookie("fontsize", size);
@@ -53,5 +50,5 @@ form.addEventListener("submit", function (e) {
   document.documentElement.style.setProperty("--fontcolor", color);
 });
 
-// Apply saved preferences on page load
-applyPreferences();//your JS code here. If required.
+// Load saved preferences
+applyPreferences();
