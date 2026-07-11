@@ -1,45 +1,44 @@
+const form = document.querySelector("form");
 const fontSizeInput = document.getElementById("fontsize");
 const fontColorInput = document.getElementById("fontcolor");
-const saveBtn = document.querySelector('input[type="submit"]');
 
-// Set cookie
 function setCookie(name, value) {
   document.cookie = `${name}=${value};path=/`;
 }
 
-// Get cookie
 function getCookie(name) {
   const cookies = document.cookie.split(";");
 
   for (let cookie of cookies) {
     cookie = cookie.trim();
-    if (cookie.indexOf(name + "=") === 0) {
+    if (cookie.startsWith(name + "=")) {
       return cookie.substring(name.length + 1);
     }
   }
+
   return "";
 }
 
-// Apply saved preferences
 function applyPreferences() {
-  const fontSize = getCookie("fontsize");
-  const fontColor = getCookie("fontcolor");
+  const size = getCookie("fontsize");
+  const color = getCookie("fontcolor");
 
-  if (fontSize) {
-    document.documentElement.style.setProperty("--fontsize", fontSize);
-    fontSizeInput.value = parseInt(fontSize);
+  if (size) {
+    document.documentElement.style.setProperty("--fontsize", size);
+    document.body.style.fontSize = size;
+    fontSizeInput.value = parseInt(size);
   }
 
-  if (fontColor) {
-    document.documentElement.style.setProperty("--fontcolor", fontColor);
-    fontColorInput.value = fontColor;
+  if (color) {
+    document.documentElement.style.setProperty("--fontcolor", color);
+    document.body.style.color = color;
+    fontColorInput.value = color;
   }
 }
 
-// Save preferences
-saveBtn.addEventListener("click", function (e) {
-  e.preventDefault();
+applyPreferences();
 
+form.addEventListener("submit", function () {
   const size = fontSizeInput.value + "px";
   const color = fontColorInput.value;
 
@@ -48,7 +47,7 @@ saveBtn.addEventListener("click", function (e) {
 
   document.documentElement.style.setProperty("--fontsize", size);
   document.documentElement.style.setProperty("--fontcolor", color);
-});
 
-// Load saved preferences
-applyPreferences();
+  document.body.style.fontSize = size;
+  document.body.style.color = color;
+});
